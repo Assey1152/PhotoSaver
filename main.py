@@ -1,24 +1,31 @@
-import requests
-import os
-from dotenv import load_dotenv
+import sys
+from PhotoSaver import PhotoSaver
 
-load_dotenv()
-access_token = os.getenv("vk_access_token")
-yandex_token = os.getenv("yandex_token")
+user_input = input('Enter VK user ID: ')
+if user_input.isdigit():
+    user_id = int(user_input)
+else:
+    print('Incorrect user id')
+    sys.exit()
 
+user_input = input('Enter album id (profile (default), wall, saved ): ')
+if user_input == '':
+    album_id = 'profile'
+elif user_input in ['', 'profile', 'wall', 'saved']:
+    album_id = user_input
+else:
+    print('Incorrect album id')
+    sys.exit()
 
-class VKInterface:
-    def __init__(self, access_token, version='5.131'):
-        self.access_token = access_token
-        self.version = version
-        self.base_url = 'https://api.vk.com/method/'
-        self.params = {'access_token': self.access_token, 'v': self.version}
+user_input = input('How many photos to save? (default - 5) : ')
+if user_input == '':
+    photo_count = 5
+elif user_input.isdigit() and int(user_input) > 0:
+    photo_count = int(user_input)
+else:
+    print('Incorrect photo_count')
+    sys.exit()
 
-    def users_info(self, users_id):
-        url = f'{self.base_url}users.get'
-        params = {**self.params, 'user_ids': users_id}
-        response = requests.get(url, params=params)
-        return response.json()
-
-
-vk = VKInterface(access_token)
+user_id = '36201576'
+saver = PhotoSaver()
+saver.save_photo(user_id, album_id, photo_count)
